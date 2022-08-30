@@ -1,0 +1,13 @@
+.idea/
+*~
+out/
+dist/
+node_modules/
+package-lock.json
+data/
+static/
+
+# We use these as temp files/directories in unit tests to validate
+# the ability to move/remove files from the file system.
+testdata/lebowski/
+*.lebowski
