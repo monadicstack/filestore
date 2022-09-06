@@ -83,10 +83,20 @@ func (s *DiskTestSuite) TestExists() {
 	s.Require().True(fs.Exists("."), "Current directory should exist")
 	s.Require().True(fs.Exists(".."), "Parent directory should exist")
 
-	s.Require().True(fs.Exists("testdata"), "Real directory should exist")
-	s.Require().True(fs.Exists("testdata/hello.txt"), "Real file should exist")
-	s.Require().True(fs.Exists("testdata/inner1/inner2/../foo.txt"), "Real file should exist")
+	s.Require().False(fs.Exists("testdata"), "Already in 'testdata' directory, so checking Exists('testdata') should be false.")
+
+	// Real files/dirs should exist regardless of nesting
+	s.Require().True(fs.Exists("hello.txt"), "Real file should exist")
+	s.Require().True(fs.Exists("inner1"), "Real directory should exist")
+	s.Require().True(fs.Exists("inner1/inner2/../foo.txt"), "Real file should exist when specifying relative path")
+	s.Require().True(fs.Exists("inner1/inner2/.."), "Real dir should exist when specifying relative path")
+
 	s.Require().False(fs.Exists("asldkfj"), "Non-existing entry should be false for Exists()")
+	s.Require().False(fs.Exists("inner1/alskdjfalkdsfj.txt"), "Non-existing entry should be false for Exists() even when parent directory exists")
+
+	// Bug fix where we weren't prepending the base directory to the path you provide.
+	s.Require().True(fs.ChangeDirectory("inner1").Exists("inner2/../foo.txt"), "Real file should exist even after cd")
+	s.Require().False(fs.ChangeDirectory("inner1").Exists("inner2/../nope.txt"), "Non-existing file should not exist even after cd")
 }
 
 func (s *DiskTestSuite) TestList_noFilters() {

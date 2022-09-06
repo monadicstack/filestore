@@ -101,7 +101,7 @@ func (d DiskFS) Stat(filePath string) (FileInfo, error) {
 
 // Exists returns true when the file/directory already exits in the file system.
 func (d DiskFS) Exists(filePath string) bool {
-	_, err := os.Stat(filePath)
+	_, err := os.Stat(path.Join(d.basePath, filePath))
 	return err == nil
 }
 
